@@ -67,7 +67,7 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
             original_message = pending_approval.pop(message_id)
 
             # Post to the approved channel
-            await approved_channel.send(f"✅ **APPROVED HEADLINE:**\n{original_message.content}")
+            await approved_channel.send(original_message.content)
 
             # Notify the original author privately
             try:
