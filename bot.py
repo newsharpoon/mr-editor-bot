@@ -63,7 +63,8 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
             approved_channel = bot.get_channel(APPROVED_CHANNEL_ID)
             original_message = pending_approval.pop(message_id)
             await approved_channel.send(f"✅ **APPROVED HEADLINE:**\n{original_message.content}")
-            await original_message.reply("✅ Your headline has been approved! Time to write it up.")
+            author = await bot.fetch_user(original_message.author.id)
+            await author.send("✅ Your headline has been approved! Time to write it up.")
             print(f"Headline approved and forwarded: {original_message.content}")
 
 bot.run(TOKEN)
