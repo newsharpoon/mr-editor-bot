@@ -61,7 +61,7 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
             print(f"Sent message link to Joey for review: {message.content}")
 
     # Step 2: Joey adds ✅ (from anywhere, including DMs)
-        elif emoji == GREEN_CHECK and reactor_id == JOEY_ID:
+           elif emoji == GREEN_CHECK and reactor_id == JOEY_ID:
         if message_id in pending_approval:
             approved_channel = bot.get_channel(APPROVED_CHANNEL_ID)
             original_message = pending_approval.pop(message_id)
@@ -81,6 +81,7 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
                 print(f"❌ Failed to DM the author: {e}")
 
             print(f"Headline approved and forwarded: {original_message.content}")
+
 
 
 
