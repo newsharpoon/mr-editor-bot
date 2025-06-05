@@ -62,15 +62,21 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
             )
             print(f"Sent message link to Joey for review: {message.content}")
 
-        # Step 2: Joey adds ✅ (from anywhere, including DMs)
-    elif emoji == GREEN_CHECK and reactor_id == JOEY_ID:
-        if message_id in pending_approval:
-            approved_channel = bot.get_channel(APPROVED_CHANNEL_ID)
-            original_message = pending_approval.pop(message_id)
-            await approved_channel.send(f"✅ **APPROVED HEADLINE:**\n{original_message.content}")
-            author = await bot.fetch_user(original_message.author.id)
-            await author.send(f"✅ Your headline has been approved!\n\n\"{original_message.content}\"")
-            print(f"Headline approved and forwarded: {original_message.content}")
+       # Step 2: Joey adds ✅ (from anywhere, including DMs)
+elif emoji == GREEN_CHECK and reactor_id == JOEY_ID:
+    if message_id in pending_approval:
+        approved_channel = bot.get_channel(APPROVED_CHANNEL_ID)
+        original_message = pending_approval.pop(message_id)
+        
+        # Post to the approved channel
+        await approved_channel.send(f"✅ **APPROVED HEADLINE:**\n{original_message.content}")
+        
+        # Notify the original author privately
+        author = await bot.fetch_user(original_message.author.id)
+        await author.send(f"✅ Your headline has been approved!\n\n\"{original_message.content}\"")
+        
+        print(f"Headline approved and forwarded: {original_message.content}")
+
 
             author = await bot.fetch_user(original_message.author.id)
             await author.send("✅ Your headline has been approved! Time to write it up.")
