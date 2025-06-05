@@ -34,12 +34,7 @@ async def on_ready():
 
 @bot.event
 async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
-    # Ignore reactions from the bot itself
     if payload.user_id == bot.user.id:
-        return
-
-    # Only monitor reactions in the ideas channel
-    if payload.channel_id != IDEAS_CHANNEL_ID:
         return
 
     emoji = str(payload.emoji)
@@ -47,17 +42,27 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
     reactor_id = payload.user_id
 
     channel = bot.get_channel(payload.channel_id)
+    if not channel:
+        return
+
     message = await channel.fetch_message(message_id)
 
-    # Step 1: Micah or Jacob adds a 🟩
-    if emoji == GREEN_SQUARE and reactor_id in [MICHAH_ID, JACOB_ID]:
+    # Step 1: Micah or Jacob adds a 🟩 in the Ideas channel
+    if (
+        emoji == GREEN_SQUARE
+        and reactor_id in [MICHAH_ID, JACOB_ID]
+        and payload.channel_id == IDEAS_CHANNEL_ID
+    ):
         if message_id not in pending_approval:
             pending_approval[message_id] = message
             joey = await bot.fetch_user(JOEY_ID)
-            await joey.send(f"🟩 Headline for review:\n\"{message.content}\"")
-            print(f"Sent message to Joey for review: {message.content}")
+            message_link = f"https://discord.com/channels/{payload.guild_id}/{payload.channel_id}/{message.id}"
+            await joey.send(
+                f"🟩 Headline for review from Ideas:\n{message_link}"
+            )
+            print(f"Sent message link to Joey for review: {message.content}")
 
-    # Step 2: Joey adds ✅
+    # Step 2: Joey adds ✅ (from anywhere, including DMs)
     elif emoji == GREEN_CHECK and reactor_id == JOEY_ID:
         if message_id in pending_approval:
             approved_channel = bot.get_channel(APPROVED_CHANNEL_ID)
@@ -66,5 +71,6 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
             author = await bot.fetch_user(original_message.author.id)
             await author.send("✅ Your headline has been approved! Time to write it up.")
             print(f"Headline approved and forwarded: {original_message.content}")
+
 
 bot.run(TOKEN)
