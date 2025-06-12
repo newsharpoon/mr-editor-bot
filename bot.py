@@ -73,7 +73,7 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
             try:
                 author = await bot.fetch_user(original_message.author.id)
                 if author.id != bot.user.id:
-                    await author.send(f"✅ Your headline has been approved!\n\n\"{original_message.content}\"")
+                    await author.send(f"✅ Your headline has been approved! It's now in the Approved Headlines channel - mark it with the checkmark to indicate that you're writing it.\n\n\"{original_message.content}\"")
                     print(f"✅ DM sent to author: {author.name}")
                 else:
                     print("⚠️ Author is the bot itself, no DM sent.")
